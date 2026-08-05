@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e99d0e84dfecf7943af80f9bd87ba591, type: 3}
+  m_Name: Goblin_Warrior_Special_2
+  m_EditorClassIdentifier: Assembly-CSharp::Combat.Data.Enemies.EnemyAbilitySO
+  id: Goblin_Sneak
+  displayName: Sneak
+  targeting:
+  - specifier: 0
+    filter: 0
+    pickCount: 0
+    label: T1
+    anchor: 0
+    anchorLabel: 
+    targetLabel: 
+  effects:
+  - {fileID: 11400000, guid: 5bd8f09053f654a4bb6688a47a614981, type: 2}
+  - {fileID: 11400000, guid: 6d08bf34b2f55df449e3881cfe88f6d0, type: 2}

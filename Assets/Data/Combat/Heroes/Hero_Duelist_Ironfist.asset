@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f63be7a8db44ba7418820cc9b057e82e, type: 3}
+  m_Name: Hero_Duelist_Ironfist
+  m_EditorClassIdentifier: Assembly-CSharp::Combat.Data.Heroes.HeroDefinitionSO
+  heroId: hero
+  displayName: Ironfist
+  laneSprite: {fileID: 4077883747772380335, guid: 67c1847e2b51ed64a80867ffc13bf278, type: 3}
+  brawn: 1
+  finesse: 1
+  ingenuity: 0
+  startingDeck: {fileID: 11400000, guid: 829a9118e502c4c4db5998b945d2e1c2, type: 2}

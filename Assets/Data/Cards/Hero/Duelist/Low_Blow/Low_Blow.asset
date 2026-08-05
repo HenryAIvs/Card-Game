@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dfc634488347644ab8227af00fae38f, type: 3}
+  m_Name: Low_Blow
+  m_EditorClassIdentifier: Assembly-CSharp::Combat.Data.Cards.HeroCardSO
+  id: Low_Blow
+  displayName: Low Blow
+  rulesText: 'Hit 2 : Nearest Adversary
+
+    Gain Temportary  Exhaustion : Self
+
+    Slow'
+  cost:
+    costs: []
+  targeting:
+  - specifier: 5
+    filter: 2
+    pickCount: 0
+    label: T1
+    anchor: 0
+    anchorLabel: 
+    targetLabel: 
+  - specifier: 0
+    filter: 0
+    pickCount: 0
+    label: T2
+    anchor: 0
+    anchorLabel: 
+    targetLabel: 
+  effects:
+  - {fileID: 11400000, guid: 5804432d062e0bc4aa7927ce80e341df, type: 2}
+  - {fileID: 11400000, guid: 0215e0f91c6de584a86004f04493d92f, type: 2}
+  tags: 00000000

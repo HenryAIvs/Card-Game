@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dfc634488347644ab8227af00fae38f, type: 3}
+  m_Name: Careful_Strike
+  m_EditorClassIdentifier: Assembly-CSharp::Combat.Data.Cards.HeroCardSO
+  id: Careful_Strike
+  displayName: Careful Strike
+  rulesText: 'Hit 1 : Nearest Adversary
+
+    Block 1 : Self
+
+    Right : Hit 1 :
+    Nearest Adversary
+
+    Left: Block 1 : Self'
+  cost:
+    costs:
+    - options: 00000000
+      amount: 1
+    - options: 01000000
+      amount: 1
+  targeting:
+  - specifier: 5
+    filter: 2
+    pickCount: 0
+    label: T1
+    anchor: 0
+    anchorLabel: 
+    targetLabel: 
+  - specifier: 0
+    filter: 0
+    pickCount: 0
+    label: T2
+    anchor: 0
+    anchorLabel: 
+    targetLabel: 
+  effects:
+  - {fileID: 11400000, guid: 5d79ebe131127084b93b7af86cbcc2fc, type: 2}
+  - {fileID: 11400000, guid: bc679c4afb6aa9e40a9235c4283ec60c, type: 2}
+  tags: 

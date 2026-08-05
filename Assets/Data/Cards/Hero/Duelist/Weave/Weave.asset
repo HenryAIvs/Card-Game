@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dfc634488347644ab8227af00fae38f, type: 3}
+  m_Name: Weave
+  m_EditorClassIdentifier: Assembly-CSharp::Combat.Data.Cards.HeroCardSO
+  id: Weave
+  displayName: Weave
+  rulesText: 'Block 1 : Self
+
+    Right : Move 1, Block 1 : Self'
+  cost:
+    costs:
+    - options: 01000000
+      amount: 1
+  targeting:
+  - specifier: 0
+    filter: 0
+    pickCount: 0
+    label: 
+    anchor: 0
+    anchorLabel: 
+    targetLabel: 
+  effects:
+  - {fileID: 11400000, guid: 0327c2985cc5b7841993f68b697257b3, type: 2}
+  - {fileID: 11400000, guid: 0e4255243078c91478180be97a8a3c75, type: 2}
+  tags: 
