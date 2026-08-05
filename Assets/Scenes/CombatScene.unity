@@ -1515,6 +1515,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UI.Combat.SelectedHeroEnergyUI
   energyBar: {fileID: 551145966}
   energyCirclePrefab: {fileID: 1223284700189290658, guid: 93efc7074f449964ab2e38ccf07d9e4f, type: 3}
+  circleScale: 2.5
 --- !u!1 &1591894644
 GameObject:
   m_ObjectHideFlags: 0

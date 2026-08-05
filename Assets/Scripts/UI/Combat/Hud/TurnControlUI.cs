@@ -20,7 +20,7 @@ namespace UI.Combat
         private void Start()
         {
             if (runner == null)
-                runner = FindObjectOfType<CombatRunner>();
+                runner = FindFirstObjectByType<CombatRunner>();
 
             if (endTurnButton != null)
             {
@@ -98,7 +98,11 @@ namespace UI.Combat
 
             if (endTurnButton != null)
             {
-                endTurnButton.interactable = state.loop.phase != CombatPhase.EndCombat;
+                // Locked while draw animations are playing so the phase can't be
+                // advanced mid-animation.
+                endTurnButton.interactable =
+                    state.loop.phase != CombatPhase.EndCombat &&
+                    (runner == null || !runner.IsCardFlowLocked);
             }
         }
 

@@ -95,6 +95,12 @@ namespace UI.Combat
                 {
                     selectedHeroEnergyUI.Refresh();
                 }
+
+                // Flash the circles the player may pick for a pending mana cost.
+                HeroHandManaSelectionController manaSelection = heroHandUI.GetManaSelectionController();
+                selectedHeroEnergyUI.SetPendingPickOptions(
+                    manaSelection != null ? manaSelection.GetCurrentChoiceOptions() : null
+                );
             }
         }
     }

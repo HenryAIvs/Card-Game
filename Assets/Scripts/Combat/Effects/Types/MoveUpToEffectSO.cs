@@ -44,7 +44,7 @@ namespace Combat.Data.Effects
                     if (currentIndex < 0)
                         continue;
 
-                    int distance = GetGapDistanceFromEntity(currentIndex, chosenGap);
+                    int distance = TargetCandidateBuilder.GetGapDistanceFromEntity(currentIndex, chosenGap);
                     if (distance <= 0)
                         continue;
 
@@ -58,17 +58,6 @@ namespace Combat.Data.Effects
                 int delta = Mathf.Clamp(defaultDelta, -maxDistance, maxDistance);
                 state.lane.MoveSwapThrough(entity, delta);
             }
-        }
-
-        private int GetGapDistanceFromEntity(int currentIndex, int gapIndex)
-        {
-            if (gapIndex < currentIndex)
-                return currentIndex - gapIndex;
-
-            if (gapIndex > currentIndex + 1)
-                return gapIndex - (currentIndex + 1);
-
-            return 0;
         }
     }
 }

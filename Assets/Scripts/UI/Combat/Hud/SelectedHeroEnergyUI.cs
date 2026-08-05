@@ -13,7 +13,12 @@ namespace UI.Combat
         [SerializeField] private Transform energyBar;
         [SerializeField] private EnergyCircleUI energyCirclePrefab;
 
+        [Header("Display")]
+        [SerializeField] private float circleScale = 2.5f;
+
         private HeroInstance hero;
+        private readonly System.Collections.Generic.List<EnergyCircleUI> spawnedCircles = new();
+        private ManaColor[] pendingPickOptions;
 
         private int lastMaxRed = -1;
         private int lastMaxYellow = -1;
@@ -96,6 +101,8 @@ namespace UI.Combat
             SpawnEnergyGroup(ManaColor.Red, hero.energyMax.red, hero.energyCurrent.red);
             SpawnEnergyGroup(ManaColor.Yellow, hero.energyMax.yellow, hero.energyCurrent.yellow);
             SpawnEnergyGroup(ManaColor.Blue, hero.energyMax.blue, hero.energyCurrent.blue);
+
+            ApplyPendingPickState();
         }
 
         private void SpawnEnergyGroup(ManaColor color, int maxAmount, int currentAmount)
@@ -112,6 +119,36 @@ namespace UI.Combat
             EnergyCircleUI circle = Instantiate(energyCirclePrefab, energyBar);
             circle.SetVisual(color, isFilled);
             circle.SetClickable(isFilled, HandleEnergyClicked);
+
+            // Gap between circles is the layout group's fixed pixel spacing;
+            // it accounts for this scale, so the gap stays constant.
+            circle.transform.localScale = Vector3.one * circleScale;
+            spawnedCircles.Add(circle);
+        }
+
+        // Colours the player may currently pick for a pending mana cost.
+        // Pass null when no selection is pending.
+        public void SetPendingPickOptions(ManaColor[] options)
+        {
+            pendingPickOptions = options;
+            ApplyPendingPickState();
+        }
+
+        private void ApplyPendingPickState()
+        {
+            for (int i = 0; i < spawnedCircles.Count; i++)
+            {
+                EnergyCircleUI circle = spawnedCircles[i];
+                if (circle == null)
+                    continue;
+
+                bool awaiting =
+                    pendingPickOptions != null &&
+                    circle.ClickIsFilled &&
+                    System.Array.IndexOf(pendingPickOptions, circle.ClickColor) >= 0;
+
+                circle.SetAwaitingPick(awaiting);
+            }
         }
 
         private void HandleEnergyClicked(ManaColor color, bool isFilled)
@@ -124,6 +161,8 @@ namespace UI.Combat
 
         private void ClearEnergyBar()
         {
+            spawnedCircles.Clear();
+
             if (energyBar == null)
                 return;
 

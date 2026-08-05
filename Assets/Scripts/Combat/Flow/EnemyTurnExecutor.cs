@@ -24,21 +24,20 @@ namespace Combat.Enemies
 
             foreach (var enemyEntity in enemies)
             {
-                int drawCount = 1 + Math.Max(0, enemyEntity.finesse);
-                var drawn = enemyDeck.Draw(drawCount);
-
                 if (enemyEntity is not EnemyInstance enemy) continue;
+
+                int drawCount = 1 + Math.Max(0, enemy.finesse);
+                var drawn = enemyDeck.Draw(drawCount);
 
                 foreach (var cardType in drawn)
                 {
                     var ability = GetAbility(enemy.archetype, cardType);
                     if (ability == null) continue;
 
-                    EffectExecutor.ExecuteAbility(state, enemyEntity, ability.targeting, ability.effects);
+                    EffectExecutor.ExecuteAbility(state, enemy, ability.targeting, ability.effects);
 
                     if (state.IsCombatOver)
                         return true;
-
                 }
             }
 

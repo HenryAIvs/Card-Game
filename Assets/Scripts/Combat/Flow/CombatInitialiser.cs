@@ -31,7 +31,7 @@ namespace Combat.Runner
                 return;
             }
 
-            runner.StateInternal = new CombatState();
+            runner.State = new CombatState();
 
             CreateHeroes();
             CreateEnemies();
@@ -40,7 +40,7 @@ namespace Combat.Runner
             DebugLogInitialState();
             InitialiseObservedHandCounts();
 
-            runner.IsInitialisedInternal = true;
+            runner.IsInitialised = true;
         }
 
         private void CreateHeroes()

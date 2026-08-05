@@ -27,14 +27,8 @@ namespace UI.Combat
                 return false;
 
             ManaCost runtimeCost = card.card.cost != null ? card.card.cost.ToRuntime() : null;
-            EnergyPool simulatedPool = owner.BoundHero.energyCurrent;
 
-            return ManaCostSolver.TryBuildPaymentPlan(
-                simulatedPool,
-                runtimeCost,
-                ChooseManaColorForPreview,
-                out PaymentPlan payment
-            );
+            return ManaCostSolver.CanPay(owner.BoundHero.energyCurrent, runtimeCost);
         }
 
         public bool CanBeginDragPlay(CardInstance card)

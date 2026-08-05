@@ -40,19 +40,6 @@ namespace Combat.Lane
             entities.Insert(insertIndex, entity);
         }
 
-        public void MoveToIndexSwapThrough(EntityInstance entity, int toIndex)
-        {
-            int from = IndexOf(entity);
-            if (from < 0) return;
-
-            int to = Math.Clamp(toIndex, 0, entities.Count - 1);
-            if (to == from) return;
-
-            entities.RemoveAt(from);
-            int insertIndex = Math.Clamp(to, 0, entities.Count);
-            entities.Insert(insertIndex, entity);
-        }
-
         public void MoveToGapSwapThrough(EntityInstance entity, int gapIndex)
         {
             int from = IndexOf(entity);
@@ -76,7 +63,5 @@ namespace Combat.Lane
             insertIndex = Math.Clamp(insertIndex, 0, entities.Count);
             entities.Insert(insertIndex, entity);
         }
-
-        public IEnumerable<EntityInstance> GetAll() => entities;
     }
 }

@@ -50,7 +50,7 @@ namespace Combat.Runner
         private void BeginStartRoundSequence()
         {
             runner.IsStartRoundSequenceRunning = true;
-            runner.IsCardFlowLockedInternal = true;
+            runner.IsCardFlowLocked = true;
         }
 
         private void EndStartRoundSequence()
@@ -58,7 +58,7 @@ namespace Combat.Runner
             runner.IsStartRoundSequenceRunning = false;
 
             if (!runner.IsDrawQueueRunning)
-                runner.IsCardFlowLockedInternal = false;
+                runner.IsCardFlowLocked = false;
         }
 
         private IEnumerator RunRoundStartDraws()

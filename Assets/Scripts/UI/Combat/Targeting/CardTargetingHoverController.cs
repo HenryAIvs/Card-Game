@@ -95,10 +95,10 @@ namespace UI.Combat
 
         public void UpdateLatchedTarget()
         {
+            // Runs every frame during a session - only log when the latch changes.
             if (state.IsSpaceRequest)
             {
-                int beforeLatched = state.latchedSpace != null ? state.latchedSpace.SpaceIndex : -1;
-                int hovered = state.hoveredSpace != null ? state.hoveredSpace.SpaceIndex : -1;
+                CombatLaneSpaceUI beforeLatched = state.latchedSpace;
 
                 if (state.hoveredSpace != null && state.validSpaces.Contains(state.hoveredSpace.SpaceIndex))
                 {
@@ -109,23 +109,18 @@ namespace UI.Combat
                     state.latchedSpace = null;
                 }
 
-                int afterLatched = state.latchedSpace != null ? state.latchedSpace.SpaceIndex : -1;
-
-                Debug.Log(
-                    $"TARGET LATCH UPDATE SPACE | hovered={hovered} | beforeLatched={beforeLatched} | afterLatched={afterLatched}"
-                );
+                if (state.latchedSpace != beforeLatched)
+                {
+                    Debug.Log(
+                        $"TARGET LATCH UPDATE SPACE | latched={(state.latchedSpace != null ? state.latchedSpace.SpaceIndex : -1)}"
+                    );
+                }
 
                 state.latchedEntry = null;
                 return;
             }
 
-            string beforeLatchedName = state.latchedEntry != null && state.latchedEntry.BoundEntity != null
-                ? state.latchedEntry.BoundEntity.id
-                : "NULL";
-
-            string hoveredName = state.hoveredEntry != null && state.hoveredEntry.BoundEntity != null
-                ? state.hoveredEntry.BoundEntity.id
-                : "NULL";
+            CombatLaneEntryUI beforeLatchedEntry = state.latchedEntry;
 
             if (state.hoveredEntry != null &&
                 state.hoveredEntry.BoundEntity != null &&
@@ -140,13 +135,14 @@ namespace UI.Combat
                 state.latchedEntry = null;
             }
 
-            string afterLatchedName = state.latchedEntry != null && state.latchedEntry.BoundEntity != null
-                ? state.latchedEntry.BoundEntity.id
-                : "NULL";
+            if (state.latchedEntry != beforeLatchedEntry)
+            {
+                string latchedName = state.latchedEntry != null && state.latchedEntry.BoundEntity != null
+                    ? state.latchedEntry.BoundEntity.id
+                    : "NULL";
 
-            Debug.Log(
-                $"TARGET LATCH UPDATE ENTITY | hovered={hoveredName} | beforeLatched={beforeLatchedName} | afterLatched={afterLatchedName}"
-            );
+                Debug.Log($"TARGET LATCH UPDATE ENTITY | latched={latchedName}");
+            }
 
             state.latchedSpace = null;
         }

@@ -73,7 +73,7 @@ namespace Combat.Runner
                 yield break;
 
             runner.IsDrawQueueRunning = true;
-            runner.IsCardFlowLockedInternal = true;
+            runner.IsCardFlowLocked = true;
 
             EnsureHandUI();
 
@@ -86,7 +86,7 @@ namespace Combat.Runner
             runner.IsDrawQueueRunning = false;
 
             if (!runner.IsStartRoundSequenceRunning)
-                runner.IsCardFlowLockedInternal = false;
+                runner.IsCardFlowLocked = false;
         }
 
         public IEnumerator AnimateOrRefreshDrawnCard(HeroInstance hero, CardInstance drawnCard)

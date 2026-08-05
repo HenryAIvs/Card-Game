@@ -40,17 +40,17 @@ namespace Combat.Entities
 
         public int GetRoundDrawCount(Combat.Core.CombatState state)
         {
-            int baseDraw = state != null && state.round == 1 ? 4 : 2;
+            if (state == null)
+                return 0;
+
+            int baseDraw = state.round == 1 ? 4 : 2;
             int draw = baseDraw + finesse;
 
             // Exhaustion = draw 1 fewer card at start of turn
             if (state.conditions.Has(this, Combat.Conditions.ConditionIds.Exhaustion))
                 draw -= 1;
 
-            if (draw < 0)
-                draw = 0;
-
-            return draw;
+            return draw < 0 ? 0 : draw;
         }
     }
 }

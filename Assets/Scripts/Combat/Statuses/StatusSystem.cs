@@ -28,11 +28,5 @@ namespace Combat.Statuses
             int cur = Get(e, id);
             Set(e, id, cur + delta, clampToZero);
         }
-
-        // Tick down statuses that represent "turn counters"
-        public void TickDown(EntityInstance e, StatusId id, int amount = 1)
-        {
-            Add(e, id, -amount, clampToZero: true);
-        }
     }
 }

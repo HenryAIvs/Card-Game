@@ -88,16 +88,6 @@ namespace UI.Combat
             ApplyLayout(immediate: true);
         }
 
-        public Vector2 GetBaseAnchoredPositionForIndex(int index, int count)
-        {
-            return BuildPose(index, count, -1, -1, -1).Position;
-        }
-
-        public Quaternion GetBaseRotationForIndex(int index, int count)
-        {
-            return BuildPose(index, count, -1, -1, -1).Rotation;
-        }
-
         private void RebuildOrderedCardList()
         {
             orderedCards.Clear();

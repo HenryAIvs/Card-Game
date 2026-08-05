@@ -21,10 +21,21 @@ namespace UI.Combat
         private static readonly Color SelectableRing = new Color(1f, 1f, 1f);
         private static readonly Color NormalRing = Color.black;
 
+        [Header("Pick Flash")]
+        [SerializeField] private float pulseSpeed = 7f;
+        [SerializeField] private float pulseScaleAmount = 0.25f;
+        [SerializeField] private float pulseBrightenAmount = 0.45f;
+
         private ManaColor clickColor;
         private bool clickIsFilled;
         private bool isClickable;
+        private bool isAwaitingPick;
+        private Vector3 baseScale = Vector3.one;
+        private Color baseFillColor = Color.white;
         private Action<ManaColor, bool> onClicked;
+
+        public ManaColor ClickColor => clickColor;
+        public bool ClickIsFilled => clickIsFilled;
 
         private void Awake()
         {
@@ -32,6 +43,36 @@ namespace UI.Combat
             {
                 clickButton.onClick.RemoveAllListeners();
                 clickButton.onClick.AddListener(HandleClicked);
+            }
+        }
+
+        private void Update()
+        {
+            if (!isAwaitingPick)
+                return;
+
+            float t = 0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * pulseSpeed);
+
+            // Brightness pulse of the circle's own colour - no hue change.
+            SetBothHalves(Color.Lerp(baseFillColor, Color.white, pulseBrightenAmount * t));
+            transform.localScale = baseScale * (1f + pulseScaleAmount * t);
+        }
+
+        // Flashes the circle while the player must pick a mana colour.
+        public void SetAwaitingPick(bool awaiting)
+        {
+            if (isAwaitingPick == awaiting)
+                return;
+
+            if (awaiting)
+                baseScale = transform.localScale;
+
+            isAwaitingPick = awaiting;
+
+            if (!awaiting)
+            {
+                transform.localScale = baseScale;
+                SetBothHalves(baseFillColor);
             }
         }
 
@@ -44,6 +85,7 @@ namespace UI.Combat
                 outerRing.color = NormalRing;
 
             Color fillColor = isFilled ? GetManaColor(color) : EmptyFill;
+            baseFillColor = fillColor;
             SetBothHalves(fillColor);
         }
 

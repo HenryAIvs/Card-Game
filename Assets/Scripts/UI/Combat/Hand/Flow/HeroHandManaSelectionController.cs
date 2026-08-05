@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Combat.Cards;
@@ -19,6 +18,15 @@ namespace UI.Combat
         private readonly List<ChoiceRequest> pendingRequests = new List<ChoiceRequest>();
 
         public bool IsAwaitingSelection => pendingCard != null && pendingRequests.Count > 0;
+
+        // Options for the pick the player must make right now, or null.
+        public ManaColor[] GetCurrentChoiceOptions()
+        {
+            if (!IsAwaitingSelection || pendingChoices.Count >= pendingRequests.Count)
+                return null;
+
+            return pendingRequests[pendingChoices.Count].Options;
+        }
 
         private struct ChoiceRequest
         {
@@ -41,7 +49,25 @@ namespace UI.Combat
         {
             CancelPendingSelection();
 
-            if (!TryBuildChoiceRequests(cost, out List<ChoiceRequest> requests))
+            if (owner.BoundHero == null)
+                return false;
+
+            // Simulate the payment with the real solver, recording every point
+            // where the player has a genuine colour choice.
+            List<ChoiceRequest> requests = new List<ChoiceRequest>();
+
+            bool payable = ManaCostSolver.TryBuildPaymentPlan(
+                owner.BoundHero.energyCurrent,
+                cost,
+                (feasibleOptions, reason) =>
+                {
+                    requests.Add(new ChoiceRequest(feasibleOptions.ToArray(), reason));
+                    return feasibleOptions[0];
+                },
+                out _
+            );
+
+            if (!payable)
                 return false;
 
             if (requests.Count == 0)
@@ -166,93 +192,5 @@ namespace UI.Combat
                 owner.RefreshHand();
         }
 
-        private bool TryBuildChoiceRequests(ManaCost cost, out List<ChoiceRequest> requests)
-        {
-            requests = new List<ChoiceRequest>();
-
-            if (owner.BoundHero == null)
-                return false;
-
-            if (cost == null || cost.costs == null)
-                return true;
-
-            Dictionary<ManaColor, int> available = BuildAvailableManaMap(owner.BoundHero.energyCurrent);
-
-            for (int i = 0; i < cost.costs.Count; i++)
-            {
-                ChoiceCost chunk = cost.costs[i];
-
-                if (chunk.options == null || chunk.options.Length == 0 || chunk.amount <= 0)
-                    continue;
-
-                string reason = GetChoiceReason(chunk.options.Length);
-
-                for (int pip = 0; pip < chunk.amount; pip++)
-                {
-                    List<ManaColor> feasible = BuildFeasibleOptions(chunk, available);
-
-                    if (feasible.Count == 0)
-                        return false;
-
-                    if (feasible.Count == 1)
-                    {
-                        available[feasible[0]]--;
-                    }
-                    else
-                    {
-                        requests.Add(new ChoiceRequest(feasible.ToArray(), reason));
-                        available[feasible[0]]--;
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        private List<ManaColor> BuildFeasibleOptions(
-            ChoiceCost chunk,
-            Dictionary<ManaColor, int> available
-        )
-        {
-            List<ManaColor> feasible = new List<ManaColor>();
-
-            for (int i = 0; i < chunk.options.Length; i++)
-            {
-                ManaColor option = chunk.options[i];
-
-                if (feasible.Contains(option))
-                    continue;
-
-                if (available.TryGetValue(option, out int amountAvailable) && amountAvailable > 0)
-                    feasible.Add(option);
-            }
-
-            return feasible;
-        }
-
-        private string GetChoiceReason(int optionCount)
-        {
-            if (optionCount == 1)
-                return "forced";
-
-            if (optionCount == 2)
-                return "flex";
-
-            return "generic";
-        }
-
-        private Dictionary<ManaColor, int> BuildAvailableManaMap(EnergyPool pool)
-        {
-            Dictionary<ManaColor, int> available = new Dictionary<ManaColor, int>();
-
-            Array allColors = Enum.GetValues(typeof(ManaColor));
-            for (int i = 0; i < allColors.Length; i++)
-            {
-                ManaColor color = (ManaColor)allColors.GetValue(i);
-                available[color] = pool.Get(color);
-            }
-
-            return available;
-        }
     }
 }

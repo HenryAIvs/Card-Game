@@ -42,22 +42,6 @@ namespace Combat.Cards
             return c;
         }
 
-        public int DrawToHand(int count)
-        {
-            int drawn = 0;
-
-            for (int i = 0; i < count; i++)
-            {
-                CardInstance card = DrawOneToHand();
-                if (card == null)
-                    break;
-
-                drawn++;
-            }
-
-            return drawn;
-        }
-
         public void DiscardFromHand(CardInstance card)
         {
             if (!hand.Remove(card)) return;
@@ -80,15 +64,9 @@ namespace Combat.Cards
         public void SetTopOrder(List<CardInstance> newOrder)
         {
             if (newOrder == null || newOrder.Count == 0) return;
+            if (newOrder.Count > drawPile.Count) return;
 
-            int n = newOrder.Count;
-
-            for (int i = 0; i < n; i++)
-            {
-                if (i >= drawPile.Count) return;
-            }
-
-            drawPile.RemoveRange(0, n);
+            drawPile.RemoveRange(0, newOrder.Count);
             drawPile.InsertRange(0, newOrder);
         }
     }

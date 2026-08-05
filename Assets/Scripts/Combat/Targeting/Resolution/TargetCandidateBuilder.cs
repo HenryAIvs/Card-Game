@@ -102,7 +102,9 @@ namespace Combat.Targeting
             return validSpaces.OrderBy(i => i).ToList();
         }
 
-        private static int GetGapDistanceFromEntity(int currentIndex, int gapIndex)
+        // Gaps run 0..laneCount; an entity at currentIndex spans gaps
+        // currentIndex and currentIndex + 1, so both count as distance 0.
+        public static int GetGapDistanceFromEntity(int currentIndex, int gapIndex)
         {
             if (gapIndex < currentIndex)
                 return currentIndex - gapIndex;

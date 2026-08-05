@@ -135,18 +135,7 @@ namespace UI.Combat
 
         private void ClearEntries()
         {
-            for (int i = spawnedEntries.Count - 1; i >= 0; i--)
-            {
-                if (spawnedEntries[i] != null)
-                    Destroy(spawnedEntries[i].gameObject);
-            }
-
-            for (int i = spawnedSpaces.Count - 1; i >= 0; i--)
-            {
-                if (spawnedSpaces[i] != null)
-                    Destroy(spawnedSpaces[i].gameObject);
-            }
-
+            // All spawned entries and spaces live under entriesRoot.
             spawnedEntries.Clear();
             spawnedSpaces.Clear();
 

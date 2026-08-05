@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Combat.Core;
@@ -26,65 +25,23 @@ namespace Combat.Runner
         [Header("Setup")]
         [SerializeField] private CombatConfigSO config;
 
-        private CombatState state;
-        private bool isInitialised = false;
-        private bool isStartRoundSequenceRunning = false;
-        private bool isDrawQueueRunning = false;
-        private bool isCardFlowLocked = false;
-
         private readonly Dictionary<HeroInstance, int> observedHandCounts = new();
         private readonly Queue<DrawRequest> drawQueue = new();
-
-        private HeroHandUI cachedHandUI;
 
         private CombatInitialiser initialiser;
         private CombatRoundSequenceController roundSequenceController;
         private CombatDrawQueueController drawQueueController;
 
-        public CombatState State => state;
-        public bool IsInitialised => isInitialised;
-        public bool IsCardFlowLocked => isCardFlowLocked;
+        public CombatState State { get; internal set; }
+        public bool IsInitialised { get; internal set; }
+        public bool IsCardFlowLocked { get; internal set; }
 
         internal CombatConfigSO Config => config;
-
-        internal bool IsStartRoundSequenceRunning
-        {
-            get => isStartRoundSequenceRunning;
-            set => isStartRoundSequenceRunning = value;
-        }
-
-        internal bool IsDrawQueueRunning
-        {
-            get => isDrawQueueRunning;
-            set => isDrawQueueRunning = value;
-        }
-
-        internal bool IsInitialisedInternal
-        {
-            get => isInitialised;
-            set => isInitialised = value;
-        }
-
-        internal bool IsCardFlowLockedInternal
-        {
-            get => isCardFlowLocked;
-            set => isCardFlowLocked = value;
-        }
-
-        internal CombatState StateInternal
-        {
-            get => state;
-            set => state = value;
-        }
-
+        internal bool IsStartRoundSequenceRunning { get; set; }
+        internal bool IsDrawQueueRunning { get; set; }
+        internal HeroHandUI CachedHandUI { get; set; }
         internal Dictionary<HeroInstance, int> ObservedHandCounts => observedHandCounts;
         internal Queue<DrawRequest> DrawQueue => drawQueue;
-
-        internal HeroHandUI CachedHandUI
-        {
-            get => cachedHandUI;
-            set => cachedHandUI = value;
-        }
 
         private void Awake()
         {
@@ -121,20 +78,19 @@ namespace Combat.Runner
 
         private bool CanTick()
         {
-            return isInitialised && state != null && !state.IsCombatOver;
+            return IsInitialised && State != null && !State.IsCombatOver;
         }
 
         public HeroInstance GetHero(int index)
         {
-            if (state == null) return null;
-            if (index < 0 || index >= state.heroes.Count) return null;
-            return state.heroes[index];
+            if (State == null) return null;
+            if (index < 0 || index >= State.heroes.Count) return null;
+            return State.heroes[index];
         }
 
         public int GetHeroCount()
         {
-            if (state == null) return 0;
-            return state.heroes.Count;
+            return State != null ? State.heroes.Count : 0;
         }
     }
 }

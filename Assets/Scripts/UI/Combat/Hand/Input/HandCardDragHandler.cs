@@ -154,7 +154,15 @@ namespace UI.Combat
             if (handFanLayout != null)
                 handFanLayout.ClearDraggingCard(cardUI);
 
-            if (played)
+            // A "played" card can still be in hand if the play is paused waiting
+            // for mana selection - only destroy the visual once it truly left.
+            bool cardLeftHand =
+                heroHandUI == null ||
+                heroHandUI.BoundHero == null ||
+                cardUI == null ||
+                !heroHandUI.BoundHero.deck.hand.Contains(cardUI.BoundCard);
+
+            if (played && cardLeftHand)
             {
                 Destroy(gameObject);
                 return;

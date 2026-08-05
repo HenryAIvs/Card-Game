@@ -35,7 +35,5 @@ namespace Combat.Resources.Mana
                 case ManaColor.Blue: blue -= amount; break;
             }
         }
-
-        public int Total() => red + yellow + blue;
     }
 }
