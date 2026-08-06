@@ -33,6 +33,9 @@ namespace Combat.Runner
 
             runner.State = new CombatState();
 
+            // A previous combat could have been torn down mid-choice.
+            Combat.Data.Effects.TargetChoiceEffectSO.ClearPendingRequests();
+
             CreateHeroes();
             CreateEnemies();
             BuildEnemyDeck();
@@ -119,7 +122,13 @@ namespace Combat.Runner
                 if (arch == null) continue;
 
                 EnemyInstance enemy = new EnemyInstance(arch);
+                runner.State.enemies.Add(enemy);
                 runner.State.lane.AddAt(runner.State.lane.entities.Count, enemy);
+
+                // Enemies enter combat already carrying their passive brawn
+                // block; from then on it refreshes at the start of their turn.
+                if (enemy.brawn > 0)
+                    runner.State.statuses.Set(enemy, Combat.Statuses.StatusId.Block, enemy.brawn);
             }
         }
 

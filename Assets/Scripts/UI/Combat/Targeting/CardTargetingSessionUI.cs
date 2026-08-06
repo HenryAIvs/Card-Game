@@ -145,7 +145,7 @@ namespace UI.Combat
             state.card = card;
             state.sourceCardUI = sourceCardUI;
             state.currentRequest = request;
-            state.partialTargets = new TargetResult();
+            state.partialTargets = request.resolvedSoFar != null ? request.resolvedSoFar : new TargetResult();
             state.lockedEntity = null;
 
             state.sourceFanLayout = sourceCardUI.GetComponentInParent<HandFanLayout>();
@@ -172,10 +172,12 @@ namespace UI.Combat
 
         public void CancelSession()
         {
-            if (!IsActive)
+            if (state == null || (state.card == null && state.currentRequest == null))
                 return;
 
-            Debug.Log($"TARGET SESSION CANCEL | Card: {state.card.card.displayName}");
+            if (state.card != null && state.card.card != null)
+                Debug.Log($"TARGET SESSION CANCEL | Card: {state.card.card.displayName}");
+
             EndSession();
         }
 

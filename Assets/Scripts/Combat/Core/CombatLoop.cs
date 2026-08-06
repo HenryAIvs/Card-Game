@@ -22,14 +22,16 @@ namespace Combat.Core
         {
             if (outcome != CombatOutcome.None) return true;
 
-            bool heroesAllOut = AllFactionUnconscious(state, Faction.Hero);
+            // Rosters, not the lane: the lane drops the dead, so outcome
+            // checks must count everyone who entered combat.
+            bool heroesAllOut = AllUnconscious(state, state.heroes);
             if (heroesAllOut)
             {
                 EndCombat(state, CombatOutcome.HeroesLose);
                 return true;
             }
 
-            bool villainsAllOut = AllFactionUnconscious(state, Faction.Villain);
+            bool villainsAllOut = AllUnconscious(state, state.enemies);
             if (villainsAllOut)
             {
                 EndCombat(state, CombatOutcome.HeroesWin);
@@ -51,10 +53,11 @@ namespace Combat.Core
             if (phase != CombatPhase.StartRound)
                 return;
 
-            // Passive Block from Brawn: both heroes + villains
+            // Passive Block from Brawn. Heroes get theirs at round start;
+            // villains get theirs when their own turn begins.
             foreach (var e in state.lane.entities)
             {
-                if (e.faction == Faction.Hero || e.faction == Faction.Villain)
+                if (e.faction == Faction.Hero)
                 {
                     state.statuses.Add(e, StatusId.Block, e.brawn, clampToZero: true);
                 }
@@ -79,6 +82,23 @@ namespace Combat.Core
             phase = CombatPhase.Heroes;
         }
 
+        public void FinishEnemyPhase(CombatState state)
+        {
+            if (phase != CombatPhase.Enemies)
+                return;
+
+            phase = CombatPhase.SlowResolve;
+        }
+
+        public void FinishSlowResolve(CombatState state)
+        {
+            if (phase != CombatPhase.SlowResolve)
+                return;
+
+            state.slowQueue.Clear();
+            phase = CombatPhase.EndRound;
+        }
+
         public void Advance(CombatState state)
         {
             if (phase == CombatPhase.EndCombat) return;
@@ -95,34 +115,24 @@ namespace Combat.Core
                     return;
 
                 case CombatPhase.Enemies:
-                {
-                    EnemyTurnExecutor.ExecuteEnemyPhase(state, state.enemyDeck);
-                    phase = CombatPhase.SlowResolve;
+                    // The enemy phase is driven by CombatRunner so each draw
+                    // and card play can be shown before its effects resolve.
                     return;
-                }
 
                 case CombatPhase.SlowResolve:
-                {
-                    for (int i = 0; i < state.slowQueue.Count; i++)
-                    {
-                        var play = state.slowQueue[i];
-
-                        if (state.conditions.Has(play.source, ConditionIds.Unconscious)) continue;
-                        EffectExecutor.ExecuteAbility(state, play.source, play.targeting, play.effects);
-
-                        if (state.IsCombatOver)
-                            return;
-                    }
-
-                    state.slowQueue.Clear();
-                    phase = CombatPhase.EndRound;
+                    // Driven by CombatRunner so each slow card can be shown
+                    // before its effects resolve.
                     return;
-                }
 
                 case CombatPhase.EndRound:
                 {
+                    // Villain block persists into the next round and resets at
+                    // the start of their own turn instead.
                     foreach (var e in state.lane.entities)
-                        state.statuses.Set(e, StatusId.Block, 0);
+                    {
+                        if (e.faction != Faction.Villain)
+                            state.statuses.Set(e, StatusId.Block, 0);
+                    }
 
                     foreach (var e in state.lane.entities)
                     {
@@ -140,13 +150,14 @@ namespace Combat.Core
             }
         }
 
-        private bool AllFactionUnconscious(CombatState state, Faction faction)
+        private bool AllUnconscious<T>(CombatState state, System.Collections.Generic.List<T> roster)
+            where T : EntityInstance
         {
             bool foundAny = false;
 
-            foreach (var e in state.lane.entities)
+            foreach (var e in roster)
             {
-                if (e.faction != faction) continue;
+                if (e == null) continue;
                 foundAny = true;
 
                 if (!state.conditions.Has(e, ConditionIds.Unconscious))

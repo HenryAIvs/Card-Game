@@ -87,12 +87,11 @@ namespace Combat.Targeting
                 // - gap currentIndex
                 // - gap currentIndex + 1
                 //
-                // Choosing either of those two gaps is a no-op, so exclude them.
+                // Those two gaps are distance 0 and count as valid picks:
+                // choosing one means "stay put", so a card that bundles a
+                // move with other effects never forces the movement.
                 for (int gapIndex = 0; gapIndex <= laneCount; gapIndex++)
                 {
-                    if (gapIndex == currentIndex || gapIndex == currentIndex + 1)
-                        continue;
-
                     int distance = GetGapDistanceFromEntity(currentIndex, gapIndex);
                     if (distance <= maxDistance)
                         validSpaces.Add(gapIndex);
@@ -120,12 +119,26 @@ namespace Combat.Targeting
             if (context == null || context.step == null || context.effects == null)
                 return 0;
 
-            for (int i = 0; i < context.effects.Count; i++)
+            return FindMoveDistanceForLabel(context.effects, context.step.label);
+        }
+
+        // Move effects can sit inside conditional wrappers (e.g. parity), so
+        // the search has to recurse to find the distance for a space label.
+        private static int FindMoveDistanceForLabel(List<EffectSO> effects, string label)
+        {
+            if (effects == null)
+                return 0;
+
+            for (int i = 0; i < effects.Count; i++)
             {
-                if (context.effects[i] is MoveUpToEffectSO moveEffect)
+                if (effects[i] is MoveUpToEffectSO moveEffect && moveEffect.spaceLabel == label)
+                    return Mathf.Max(0, moveEffect.maxDistance);
+
+                if (effects[i] is ParityConditionalEffectSO conditional)
                 {
-                    if (moveEffect != null && moveEffect.spaceLabel == context.step.label)
-                        return Mathf.Max(0, moveEffect.maxDistance);
+                    int nested = FindMoveDistanceForLabel(conditional.effects, label);
+                    if (nested > 0)
+                        return nested;
                 }
             }
 

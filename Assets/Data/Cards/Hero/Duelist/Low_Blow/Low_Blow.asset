@@ -14,11 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Combat.Data.Cards.HeroCardSO
   id: Low_Blow
   displayName: Low Blow
-  rulesText: 'Hit 2 : Nearest Adversary
-
-    Gain Temportary  Exhaustion : Self
-
-    Slow'
+  rulesText: "Hit 2 Nearest Adversary\nGain Temporary Exhaustion Self\nSlow"
   cost:
     costs: []
   targeting:

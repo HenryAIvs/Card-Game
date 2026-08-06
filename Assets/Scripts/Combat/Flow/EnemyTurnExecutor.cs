@@ -12,22 +12,44 @@ namespace Combat.Enemies
 {
     public static class EnemyTurnExecutor
     {
-        public static bool ExecuteEnemyPhase(CombatState state, EnemyDeckState enemyDeck)
+        public static List<EnemyInstance> GetActingEnemies(CombatState state)
         {
-            var enemies = state.lane.entities
+            return state.lane.entities
                 .Where(e =>
                     e.faction == Faction.Villain &&
                     e.disposition == Disposition.Hostile &&
                     !state.conditions.Has(e, ConditionIds.Unconscious))
                 .OrderByDescending(e => e.finesse)
+                .OfType<EnemyInstance>()
                 .ToList();
+        }
 
-            foreach (var enemyEntity in enemies)
+        public static int GetDrawCount(EnemyInstance enemy)
+        {
+            return 1 + Math.Max(0, enemy.finesse);
+        }
+
+        // Enemy block lasts until the enemies act again: at the start of
+        // their turn any leftover block clears and their passive brawn
+        // block comes back fresh.
+        public static void ResetEnemyBlockAtTurnStart(CombatState state)
+        {
+            foreach (var e in state.lane.entities)
             {
-                if (enemyEntity is not EnemyInstance enemy) continue;
+                if (e.faction == Faction.Villain)
+                    state.statuses.Set(e, Statuses.StatusId.Block, Math.Max(0, e.brawn));
+            }
+        }
 
-                int drawCount = 1 + Math.Max(0, enemy.finesse);
-                var drawn = enemyDeck.Draw(drawCount);
+        // Instant, non-animated version. Normal play goes through
+        // CombatRunner's enemy turn sequence instead.
+        public static bool ExecuteEnemyPhase(CombatState state, EnemyDeckState enemyDeck)
+        {
+            ResetEnemyBlockAtTurnStart(state);
+
+            foreach (var enemy in GetActingEnemies(state))
+            {
+                var drawn = enemyDeck.Draw(GetDrawCount(enemy));
 
                 foreach (var cardType in drawn)
                 {
@@ -44,7 +66,7 @@ namespace Combat.Enemies
             return false;
         }
 
-        private static EnemyAbilitySO GetAbility(EnemyArchetypeSO arch, EnemyCardType type)
+        public static EnemyAbilitySO GetAbility(EnemyArchetypeSO arch, EnemyCardType type)
         {
             return type switch
             {

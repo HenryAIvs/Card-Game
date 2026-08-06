@@ -18,7 +18,7 @@ MonoBehaviour:
   - specifier: 5
     filter: 2
     pickCount: 0
-    label: t1
+    label: T1
     anchor: 0
     anchorLabel: 
     targetLabel: 

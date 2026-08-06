@@ -14,9 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Combat.Data.Cards.HeroCardSO
   id: Weave
   displayName: Weave
-  rulesText: 'Block 1 : Self
-
-    Right : Move 1, Block 1 : Self'
+  rulesText: "Block 1 Self\nRight:\n<indent=8%>Move 1, Block 1 Self</indent>"
   cost:
     costs:
     - options: 01000000
@@ -25,10 +23,17 @@ MonoBehaviour:
   - specifier: 0
     filter: 0
     pickCount: 0
-    label: 
+    label: T1
     anchor: 0
-    anchorLabel: 
-    targetLabel: 
+    anchorLabel:
+    targetLabel:
+  - specifier: 0
+    filter: 6
+    pickCount: 0
+    label: S1
+    anchor: 1
+    anchorLabel: T1
+    targetLabel:
   effects:
   - {fileID: 11400000, guid: 0327c2985cc5b7841993f68b697257b3, type: 2}
   - {fileID: 11400000, guid: 0e4255243078c91478180be97a8a3c75, type: 2}

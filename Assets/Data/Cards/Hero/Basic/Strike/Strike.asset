@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Combat.Data.Cards.HeroCardSO
   id: Strike
   displayName: Strike
-  rulesText: 'Hit 1 : Nearest Adversary'
+  rulesText: 'Hit 1 Nearest Adversary'
   cost:
     costs:
     - options: 000000000100000002000000
       amount: 1
   targeting:
-  - specifier: 0
+  - specifier: 5
     filter: 2
     pickCount: 0
     label: T1

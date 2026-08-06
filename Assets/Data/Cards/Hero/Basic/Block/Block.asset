@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Combat.Data.Cards.HeroCardSO
   id: Block
   displayName: Block
-  rulesText: 'Block 1 : Self'
+  rulesText: 'Block 1 Self'
   cost:
     costs:
     - options: 000000000100000002000000

@@ -14,11 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Combat.Data.Cards.HeroCardSO
   id: Right_Jab
   displayName: Right Jab
-  rulesText: 'Hit 1 : Nearest Adversary
-
-    Right : Hit 1 Nearest Adversary
-
-    Slow'
+  rulesText: "Hit 1 Nearest Adversary\nRight:\n<indent=8%>Hit 1 Nearest Adversary</indent>\nSlow"
   cost:
     costs:
     - options: 00000000

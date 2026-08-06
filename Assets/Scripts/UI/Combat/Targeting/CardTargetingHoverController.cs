@@ -45,6 +45,11 @@ namespace UI.Combat
             if (state.hoveredEntry == entry)
                 state.hoveredEntry = null;
 
+            // Un-latch so releasing over empty space cancels instead of
+            // firing at the last hovered target.
+            if (state.latchedEntry == entry)
+                state.latchedEntry = null;
+
             UpdateLatchedTarget();
         }
 
@@ -79,6 +84,9 @@ namespace UI.Combat
 
             if (state.hoveredSpace == space)
                 state.hoveredSpace = null;
+
+            if (state.latchedSpace == space)
+                state.latchedSpace = null;
 
             UpdateLatchedTarget();
         }

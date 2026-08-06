@@ -405,6 +405,7 @@ MonoBehaviour:
   arrowOrigin: {fileID: 2698171435119405883}
   costRow: {fileID: 6720041395723070151}
   costCirclePrefab: {fileID: 1223284700189290658, guid: 93efc7074f449964ab2e38ccf07d9e4f, type: 3}
+  costCircleSpacing: 24
   canvasGroup: {fileID: 2019016480716351212}
   playableAlpha: 1
   unplayableAlpha: 0.65

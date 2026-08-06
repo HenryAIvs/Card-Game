@@ -17,6 +17,11 @@ namespace UI.Combat
         [SerializeField] private Color validTargetColor = Color.yellow;
         [SerializeField] private Color latchedTargetColor = Color.red;
 
+        [Header("Flash")]
+        [SerializeField] private float flashSpeed = 6f;
+        [SerializeField, Range(0f, 1f)] private float flashMinAlpha = 0.15f;
+        [SerializeField, Range(0f, 1f)] private float flashMaxAlpha = 0.6f;
+
         private int spaceIndex = -1;
         private bool isValidTarget = false;
         private bool isLatchedTarget = false;
@@ -27,6 +32,19 @@ namespace UI.Combat
         {
             ApplyTargetHighlight();
             ApplyRaycastState();
+        }
+
+        private void Update()
+        {
+            // Valid spaces pulse yellow; a latched space stays solid.
+            if (!isValidTarget || isLatchedTarget || targetHighlight == null)
+                return;
+
+            float t = 0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * flashSpeed);
+
+            Color color = validTargetColor;
+            color.a = Mathf.Lerp(flashMinAlpha, flashMaxAlpha, t);
+            targetHighlight.color = color;
         }
 
         public void Bind(int index)

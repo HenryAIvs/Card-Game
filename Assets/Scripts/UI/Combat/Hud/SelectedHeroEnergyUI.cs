@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 using Combat.Entities;
 using Combat.Resources.Mana;
 
@@ -14,7 +15,11 @@ namespace UI.Combat
         [SerializeField] private EnergyCircleUI energyCirclePrefab;
 
         [Header("Display")]
-        [SerializeField] private float circleScale = 2.5f;
+        [SerializeField] private float circleScale = 3.5f;
+
+        // Gap between circles in unscaled prefab pixels; the on-screen gap
+        // is this multiplied by circleScale, so it grows with the circles.
+        [SerializeField] private float circleSpacing = 5f;
 
         private HeroInstance hero;
         private readonly System.Collections.Generic.List<EnergyCircleUI> spawnedCircles = new();
@@ -97,6 +102,7 @@ namespace UI.Combat
         private void RebuildEnergyBar()
         {
             ClearEnergyBar();
+            ConfigureEnergyBarLayout();
 
             SpawnEnergyGroup(ManaColor.Red, hero.energyMax.red, hero.energyCurrent.red);
             SpawnEnergyGroup(ManaColor.Yellow, hero.energyMax.yellow, hero.energyCurrent.yellow);
@@ -114,15 +120,41 @@ namespace UI.Combat
             }
         }
 
+        // The layout group measures rects, not localScale, so each circle's
+        // LayoutElement must reserve the scaled footprint. Scale is kept on
+        // the transform (the pulse animates it) without disturbing layout.
+        private void ConfigureEnergyBarLayout()
+        {
+            HorizontalLayoutGroup layout = energyBar.GetComponent<HorizontalLayoutGroup>();
+            if (layout == null)
+                return;
+
+            layout.childAlignment = TextAnchor.MiddleCenter;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = false;
+            layout.childForceExpandHeight = false;
+            layout.spacing = circleSpacing * circleScale;
+        }
+
         private void SpawnEnergyCircle(ManaColor color, bool isFilled)
         {
             EnergyCircleUI circle = Instantiate(energyCirclePrefab, energyBar);
             circle.SetVisual(color, isFilled);
             circle.SetClickable(isFilled, HandleEnergyClicked);
 
-            // Gap between circles is the layout group's fixed pixel spacing;
-            // it accounts for this scale, so the gap stays constant.
             circle.transform.localScale = Vector3.one * circleScale;
+
+            LayoutElement layoutElement = circle.GetComponent<LayoutElement>();
+            if (layoutElement != null)
+            {
+                if (layoutElement.preferredWidth > 0f)
+                    layoutElement.preferredWidth *= circleScale;
+
+                if (layoutElement.preferredHeight > 0f)
+                    layoutElement.preferredHeight *= circleScale;
+            }
+
             spawnedCircles.Add(circle);
         }
 

@@ -133,6 +133,14 @@ namespace UI.Combat
             if (isTargetingDrag)
             {
                 isTargetingDrag = false;
+                canvasGroup.blocksRaycasts = true;
+
+                // SetDraggingCard stomped the session's aiming state, so the
+                // fan layout must be released here or it keeps treating this
+                // card as dragged and ignores hover on every other card.
+                if (handFanLayout != null)
+                    handFanLayout.ClearDraggingCard(cardUI);
+
                 return;
             }
 

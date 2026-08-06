@@ -14,9 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Combat.Data.Cards.HeroCardSO
   id: Thinking_Ahead
   displayName: Thinking Ahead
-  rulesText: 'Left: Scry 4: Self
-
-    Right: Move 1 : Self'
+  rulesText: "Left:\n<indent=8%>Scry 4 Self</indent>\nRight:\n<indent=8%>Move 1 Self</indent>"
   cost:
     costs: []
   targeting:
@@ -25,8 +23,15 @@ MonoBehaviour:
     pickCount: 0
     label: T1
     anchor: 0
-    anchorLabel: 
-    targetLabel: 
+    anchorLabel:
+    targetLabel:
+  - specifier: 0
+    filter: 6
+    pickCount: 0
+    label: S1
+    anchor: 1
+    anchorLabel: T1
+    targetLabel:
   effects:
   - {fileID: 11400000, guid: 8c2aa2c93c14be045bd4c8c74bc996c6, type: 2}
   - {fileID: 11400000, guid: 79ecb17032ebbd04c8a9dd69ae5ed1fc, type: 2}

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Combat.Core;
 using Combat.Entities;
 using Combat.Data.Effects;
+using Combat.Resolution.Types;
 using UnityEngine;
 
 namespace Combat.Targeting
@@ -176,6 +177,12 @@ namespace Combat.Targeting
                 if (step == null)
                     continue;
 
+                if (step.filter == TargetFilter.Space && ShouldSkipSpaceStep(source, effects, step.label))
+                {
+                    Debug.Log($"TARGET STEP SKIP | space step {step.label} only feeds inactive parity effects");
+                    continue;
+                }
+
                 TargetContext context = new TargetContext(state, source, step, simulatedResult, effects);
 
                 List<EntityInstance> entityCandidates = TargetCandidateBuilder.BuildEntityCandidates(context);
@@ -206,6 +213,7 @@ namespace Combat.Targeting
                     {
                         manualStepIndex = i,
                         step = step,
+                        resolvedSoFar = simulatedResult,
                         validSpaces = new List<int>(spaceCandidates)
                     };
 
@@ -219,6 +227,7 @@ namespace Combat.Targeting
                 {
                     manualStepIndex = i,
                     step = step,
+                    resolvedSoFar = simulatedResult,
                     validTargets = new List<EntityInstance>(entityCandidates)
                 };
 
@@ -227,6 +236,58 @@ namespace Combat.Targeting
 
             complete = true;
             return true;
+        }
+
+        // A space step is skippable when the moves consuming its label all sit
+        // behind parity conditions the current hand size fails. If no known
+        // effect references the label at all, keep the step (be conservative).
+        private static bool ShouldSkipSpaceStep(
+            EntityInstance source,
+            List<EffectSO> effects,
+            string label
+        )
+        {
+            if (!SpaceLabelReferenced(effects, label, source, activeOnly: false))
+                return false;
+
+            return !SpaceLabelReferenced(effects, label, source, activeOnly: true);
+        }
+
+        private static bool SpaceLabelReferenced(
+            List<EffectSO> effects,
+            string label,
+            EntityInstance source,
+            bool activeOnly
+        )
+        {
+            if (effects == null)
+                return false;
+
+            for (int i = 0; i < effects.Count; i++)
+            {
+                if (effects[i] is MoveUpToEffectSO moveEffect && moveEffect.spaceLabel == label)
+                    return true;
+
+                if (effects[i] is ParityConditionalEffectSO conditional)
+                {
+                    if (activeOnly && !IsParityConditionMet(conditional, source))
+                        continue;
+
+                    if (SpaceLabelReferenced(conditional.effects, label, source, activeOnly))
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool IsParityConditionMet(ParityConditionalEffectSO conditional, EntityInstance source)
+        {
+            if (conditional == null || source is not HeroInstance hero)
+                return true;
+
+            bool isOdd = (hero.deck.hand.Count % 2) == 1;
+            return conditional.parity == ParityType.Left ? isOdd : !isOdd;
         }
 
         private static TargetResult CloneTargetResult(TargetResult input)

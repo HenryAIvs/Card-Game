@@ -12,4 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2dfc3b5d0cc274244a01e3e2f5f06ffc, type: 3}
   m_Name: EnemyDeck
   m_EditorClassIdentifier: Assembly-CSharp::Combat.Data.Enemies.EnemyDeckSO
-  cards: 
+  cards:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 1
+  - 1
+  - 1
+  - 2
+  - 2
+  - 3

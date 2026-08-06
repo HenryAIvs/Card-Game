@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Combat.Data.Cards.HeroCardSO
   id: Move
   displayName: Move
-  rulesText: 'Move 1 : Any Target'
+  rulesText: 'Move 1 Any Target'
   cost:
     costs: []
   targeting:

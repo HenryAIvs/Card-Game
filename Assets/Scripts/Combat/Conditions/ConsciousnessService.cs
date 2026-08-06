@@ -21,6 +21,10 @@ namespace Combat.Conditions
 
             state.conditions.Apply(entity, ConditionIds.Unconscious, duration);
 
+            // Downed entities leave the lane; win/loss checks run off the
+            // hero/enemy rosters, which keep them.
+            state.lane.Remove(entity);
+
             // End-combat check happens ONLY here.
             state.loop.TryEndCombat(state);
 

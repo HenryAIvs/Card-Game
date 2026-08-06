@@ -87,6 +87,10 @@ namespace UI.Combat
             {
                 bool played = state.owner.TryPlayCard(state.card, state.partialTargets);
                 Debug.Log($"TARGET ADVANCE ENTITY COMPLETE | owner.TryPlayCard returned {played}");
+
+                // The session is finished either way; clearing the request
+                // deactivates it so the arrow doesn't linger.
+                state.currentRequest = null;
                 return played;
             }
 
@@ -151,6 +155,8 @@ namespace UI.Combat
             {
                 bool played = state.owner.TryPlayCard(state.card, state.partialTargets);
                 Debug.Log($"TARGET ADVANCE SPACE COMPLETE | owner.TryPlayCard returned {played}");
+
+                state.currentRequest = null;
                 return played;
             }
 

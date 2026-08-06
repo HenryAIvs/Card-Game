@@ -31,6 +31,8 @@ namespace Combat.Runner
         private CombatInitialiser initialiser;
         private CombatRoundSequenceController roundSequenceController;
         private CombatDrawQueueController drawQueueController;
+        private CombatEnemyTurnController enemyTurnController;
+        private CombatSlowResolveController slowResolveController;
 
         public CombatState State { get; internal set; }
         public bool IsInitialised { get; internal set; }
@@ -39,6 +41,8 @@ namespace Combat.Runner
         internal CombatConfigSO Config => config;
         internal bool IsStartRoundSequenceRunning { get; set; }
         internal bool IsDrawQueueRunning { get; set; }
+        internal bool IsEnemyTurnSequenceRunning { get; set; }
+        internal bool IsSlowResolveSequenceRunning { get; set; }
         internal HeroHandUI CachedHandUI { get; set; }
         internal Dictionary<HeroInstance, int> ObservedHandCounts => observedHandCounts;
         internal Queue<DrawRequest> DrawQueue => drawQueue;
@@ -48,6 +52,8 @@ namespace Combat.Runner
             initialiser = new CombatInitialiser(this);
             drawQueueController = new CombatDrawQueueController(this);
             roundSequenceController = new CombatRoundSequenceController(this, drawQueueController);
+            enemyTurnController = new CombatEnemyTurnController(this);
+            slowResolveController = new CombatSlowResolveController(this);
         }
 
         private void Start()
@@ -65,6 +71,26 @@ namespace Combat.Runner
             if (roundSequenceController.ShouldStartRoundSequence())
             {
                 StartCoroutine(roundSequenceController.RunStartRoundSequence());
+                return;
+            }
+
+            if (enemyTurnController.ShouldStartEnemySequence())
+            {
+                StartCoroutine(enemyTurnController.RunEnemyPhaseSequence());
+                return;
+            }
+
+            if (slowResolveController.ShouldStartSlowResolveSequence())
+            {
+                StartCoroutine(slowResolveController.RunSlowResolveSequence());
+                return;
+            }
+
+            // End-of-round is pure cleanup - no player decision, so it
+            // advances straight into the next round's start sequence.
+            if (State.loop.phase == CombatPhase.EndRound)
+            {
+                State.loop.Advance(State);
                 return;
             }
 

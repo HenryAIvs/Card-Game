@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Combat.Core;
@@ -14,15 +15,25 @@ namespace Combat.Data.Effects
         SortByName
     }
 
+    public class ScryRequest
+    {
+        public HeroInstance hero;
+        public int amount;
+    }
+
     [CreateAssetMenu(menuName = "Combat/Effects/Scry", fileName = "Effect_Scry")]
     public class ScryEffectSO : EffectSO
     {
         public override string Keyword => "Scry";
 
+        // Raised when a hero scries their own deck and a UI is present to
+        // handle the reorder. With no subscriber, reorderMode applies instead.
+        public static event Action<ScryRequest> OnScryRequested;
+
         public int amount = 1;              // Scry X
         public string targetLabel = "T1";   // who we are "scrying"
 
-        // TEMP until UI exists
+        // Fallback when no scry UI is subscribed (and for tests).
         public ScryReorderMode reorderMode = ScryReorderMode.NoChange;
 
         public override void Execute(CombatState state, EntityInstance source, Targeting.TargetResult targets)
@@ -52,6 +63,13 @@ namespace Combat.Data.Effects
                 {
                     var top = hero.deck.PeekTop(x);
                     if (top.Count <= 1) continue;
+
+                    if (OnScryRequested != null)
+                    {
+                        Debug.Log($"[Scry] {hero.id} scries top {top.Count} | handing to UI.");
+                        OnScryRequested.Invoke(new ScryRequest { hero = hero, amount = x });
+                        continue;
+                    }
 
                     var reordered = ReorderHero(top);
                     hero.deck.SetTopOrder(reordered);

@@ -18,6 +18,10 @@ namespace Combat.Core
         public StatusSystem statuses = new();
         public List<SlowCardPlay> slowQueue = new();
         public List<HeroInstance> heroes = new();
+
+        // Full enemy roster. Unlike the lane (which drops the dead), this
+        // persists so win/loss checks can count the fallen.
+        public List<EnemyInstance> enemies = new();
         public EnemyDeckState enemyDeck = new EnemyDeckState();
 
         public bool IsCombatOver => loop.phase == CombatPhase.EndCombat;

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Combat.Entities;
 
@@ -5,11 +6,14 @@ namespace Combat.Targeting
 {
     public class TargetResult
     {
+        // Labels are case-insensitive so an authoring slip like "t1" vs "T1"
+        // cannot silently disconnect an effect from its targets.
+
         // Entities selected by each step label
-        public Dictionary<string, List<EntityInstance>> selections = new();
+        public Dictionary<string, List<EntityInstance>> selections = new(StringComparer.OrdinalIgnoreCase);
 
         // Spaces selected by each step label (insertion indices)
-        public Dictionary<string, List<int>> spaces = new();
+        public Dictionary<string, List<int>> spaces = new(StringComparer.OrdinalIgnoreCase);
 
         public List<EntityInstance> GetEntities(string label)
         {

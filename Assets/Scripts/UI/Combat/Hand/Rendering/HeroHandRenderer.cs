@@ -38,6 +38,8 @@ namespace UI.Combat
             if (cardContainer == null || owner.BoundHero == null)
                 return;
 
+            int handCount = owner.BoundHero.deck.hand.Count;
+
             for (int i = 0; i < cardContainer.childCount; i++)
             {
                 HandCardUI cardUI = cardContainer.GetChild(i).GetComponent<HandCardUI>();
@@ -47,6 +49,7 @@ namespace UI.Combat
                 CardInstance card = cardUI.BoundCard;
                 bool isPlayable = owner.CanCurrentlyPlayCard(card);
                 cardUI.SetPlayableState(isPlayable);
+                cardUI.RefreshParityHighlight(handCount);
             }
         }
 

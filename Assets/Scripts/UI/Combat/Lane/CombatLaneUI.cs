@@ -123,6 +123,18 @@ namespace UI.Combat
             }
         }
 
+        public CombatLaneEntryUI FindEntry(EntityInstance entity)
+        {
+            for (int i = 0; i < spawnedEntries.Count; i++)
+            {
+                CombatLaneEntryUI entry = spawnedEntries[i];
+                if (entry != null && entry.BoundEntity == entity)
+                    return entry;
+            }
+
+            return null;
+        }
+
         private void RefreshEntries()
         {
             for (int i = 0; i < spawnedEntries.Count; i++)

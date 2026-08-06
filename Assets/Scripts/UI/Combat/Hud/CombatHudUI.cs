@@ -54,6 +54,18 @@ namespace UI.Combat
             }
 
             heroHandUI.SetSelectedHeroIndex(0);
+
+            // Hosts for the code-built overlays; nothing in the scene
+            // references them, so they are created here on first init.
+            if (FindFirstObjectByType<ScryOverlayUI>() == null)
+                new GameObject("ScryOverlayUI").AddComponent<ScryOverlayUI>();
+
+            if (FindFirstObjectByType<TargetChoicePanelUI>() == null)
+                new GameObject("TargetChoicePanelUI").AddComponent<TargetChoicePanelUI>();
+
+            if (FindFirstObjectByType<CombatEndUI>() == null)
+                new GameObject("CombatEndUI").AddComponent<CombatEndUI>();
+
             hasInitialisedUi = true;
         }
 

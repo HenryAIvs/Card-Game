@@ -14,14 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Combat.Data.Cards.HeroCardSO
   id: Careful_Strike
   displayName: Careful Strike
-  rulesText: 'Hit 1 : Nearest Adversary
-
-    Block 1 : Self
-
-    Right : Hit 1 :
-    Nearest Adversary
-
-    Left: Block 1 : Self'
+  rulesText: "Hit 1 Nearest Adversary\nBlock 1 Self\nRight:\n<indent=8%>Hit 1 Nearest Adversary</indent>\nLeft:\n<indent=8%>Block 1 Self</indent>"
   cost:
     costs:
     - options: 00000000

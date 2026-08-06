@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Combat.Data.Cards.HeroCardSO
   id: Left_Hook
   displayName: Left Hook
-  rulesText: 'Left: Hit 2 : Nearest Adversary'
+  rulesText: "Left:\n<indent=8%>Hit 2 Nearest Adversary</indent>"
   cost:
     costs:
     - options: 00000000

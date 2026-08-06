@@ -28,6 +28,9 @@ namespace Combat.Cards
             if (state == null || hero == null || cardInstance == null)
                 return false;
 
+            if (chosenTargets == null)
+                chosenTargets = new TargetResult();
+
             if (state.conditions.Has(hero, ConditionIds.Unconscious))
                 return false;
 
@@ -66,7 +69,7 @@ namespace Combat.Cards
 
                 state.slowQueue.Add(new SlowCardPlay(
                     hero,
-                    cardInstance.card.displayName,
+                    cardInstance.card,
                     cardInstance.card.targeting,
                     resolvedSlowEffects
                 ));
@@ -74,6 +77,14 @@ namespace Combat.Cards
                 hero.deck.DiscardFromHand(cardInstance);
                 return true;
             }
+
+            ResolveMissingTargetSteps(
+                state,
+                hero,
+                cardInstance.card.targeting,
+                cardInstance.card.effects,
+                chosenTargets
+            );
 
             EffectExecutor.ExecuteAbility(
                 state,
@@ -84,6 +95,58 @@ namespace Combat.Cards
 
             hero.deck.DiscardFromHand(cardInstance);
             return true;
+        }
+
+        // Manual targeting only fills the labels the player picked; steps that
+        // auto-resolve (Nearest, All, ...) are still empty here and must be
+        // resolved against the current board before the effects run.
+        private static void ResolveMissingTargetSteps(
+            CombatState state,
+            HeroInstance hero,
+            List<TargetStep> steps,
+            List<EffectSO> effects,
+            TargetResult targets
+        )
+        {
+            if (steps == null || targets == null)
+                return;
+
+            List<EntityInstance> ChooseEntities(List<EntityInstance> options, int count)
+            {
+                var picked = new List<EntityInstance>();
+                for (int i = 0; i < Mathf.Min(count, options.Count); i++)
+                    picked.Add(options[i]);
+                return picked;
+            }
+
+            List<int> ChooseSpaces(List<int> options, int count)
+            {
+                var picked = new List<int>();
+                for (int i = 0; i < Mathf.Min(count, options.Count); i++)
+                    picked.Add(options[i]);
+                return picked;
+            }
+
+            for (int i = 0; i < steps.Count; i++)
+            {
+                TargetStep step = steps[i];
+                if (step == null || string.IsNullOrEmpty(step.label))
+                    continue;
+
+                bool alreadyChosen = step.filter == TargetFilter.Space
+                    ? targets.spaces.ContainsKey(step.label)
+                    : targets.selections.ContainsKey(step.label);
+
+                if (alreadyChosen)
+                    continue;
+
+                TargetResolver.ResolveStep(state, hero, step, targets, effects, ChooseEntities, ChooseSpaces);
+
+                Debug.Log(
+                    $"AUTO TARGET RESOLVE | {step.specifier} {step.filter} -> {step.label} | " +
+                    $"Resolved: {targets.GetEntities(step.label).Count} entities, {targets.GetSpaces(step.label).Count} spaces"
+                );
+            }
         }
 
         public static bool TryPlayCard(
